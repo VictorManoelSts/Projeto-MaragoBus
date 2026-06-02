@@ -15,7 +15,7 @@ import { getAluno } from '../../services/alunos.service';
 import { getAdmin } from '../../services/admins.service';
 import type { RootStackParamList, UserRole } from '../../types/Index';
 
-const logo = require('../../assets/logo-Maragogi.png');
+const logo = require('../../../assets/logo-Maragogi.png');
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
