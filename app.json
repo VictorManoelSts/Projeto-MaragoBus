@@ -4,10 +4,10 @@
     "slug": "maragobus",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo-maragogi.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo-maragogi.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo-maragogi.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "br.gov.maragogi.maragobus"
