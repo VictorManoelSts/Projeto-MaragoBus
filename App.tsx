@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Colors, Spacing } from './src/constants/theme';
+import { logout } from './src/services/auth.service';
 import type {
   RootStackParamList,
   AlunoTabParamList,
@@ -41,6 +42,18 @@ const LogoHeader: React.FC = () => (
 const hdrStyles = StyleSheet.create({
   wrap: { alignItems: 'center', paddingVertical: 8 },
   logo: { height: 38, width: 160 },
+  sairBtn: {
+    backgroundColor: Colors.primaryLight,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    marginRight: 16,
+  },
+  sairTxt: {
+    color: Colors.primary,
+    fontWeight: '600',
+    fontSize: 14,
+  },
 });
 
 // ─── Aluno Tabs ──────────────────────────────────────────────────────────────
@@ -88,7 +101,13 @@ const AlunoNavigator: React.FC<{ aluno: Aluno; onLogout: () => void }> = ({ alun
 );
 
 // ─── Admin Tabs ──────────────────────────────────────────────────────────────
-const AdminNavigator: React.FC<{ onLogout: () => void }> = () => (
+const AdminNavigator: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
+  const handleLogout = async () => {
+    await logout();
+    onLogout();
+  };
+
+  return (
   <AdminTab.Navigator
     screenOptions={{
       tabBarActiveTintColor: Colors.primary,
@@ -98,6 +117,11 @@ const AdminNavigator: React.FC<{ onLogout: () => void }> = () => (
       headerTitleAlign: 'center',
       headerStyle: { backgroundColor: Colors.white },
       headerShadowVisible: false,
+      headerRight: () => (
+        <TouchableOpacity onPress={handleLogout} style={hdrStyles.sairBtn}>
+          <Text style={hdrStyles.sairTxt}>Sair</Text>
+        </TouchableOpacity>
+      ),
     }}>
     <AdminTab.Screen
       name="AdminReservas"
@@ -124,7 +148,8 @@ const AdminNavigator: React.FC<{ onLogout: () => void }> = () => (
       }}
     />
   </AdminTab.Navigator>
-);
+  );
+};
 
 // ─── Ícone de aba ─────────────────────────────────────────────────────────────
 const TabIcon: React.FC<{ icon: string; color: string }> = ({ icon }) => (
