@@ -82,6 +82,7 @@ export type AlunoTabParamList = {
 export type AdminTabParamList = {
   AdminReservas: undefined;
   AdminAlunos: undefined;
+  AdminMotoristas: undefined;
   AdminCadastro: undefined;
 };
  

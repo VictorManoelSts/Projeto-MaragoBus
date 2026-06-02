@@ -150,6 +150,27 @@ export const excluirAluno = onCall(
   },
 );
 
+// ─── excluirMotorista ─────────────────────────────────────────────────────────
+// Remove o motorista do Firebase Auth e do Firestore.
+
+export const excluirMotorista = onCall(
+  { region: 'southamerica-east1' },
+  async (request) => {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Não autenticado.');
+    await assertAdmin(request.auth.uid);
+
+    const { motoristaId } = request.data as { motoristaId: string };
+
+    await Promise.all([
+      db.collection('motoristas').doc(motoristaId).delete(),
+      db.collection('usuarios').doc(motoristaId).delete(),
+      adminAuth.deleteUser(motoristaId).catch(() => {}),
+    ]);
+
+    return { success: true };
+  },
+);
+
 // ─── criarAdmin ──────────────────────────────────────────────────────────────
 // Use apenas uma vez no setup inicial via Firebase Console ou CLI.
 // Após criar o primeiro admin, remova ou proteja este endpoint.

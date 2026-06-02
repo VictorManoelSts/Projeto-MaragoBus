@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.criarAdmin = exports.excluirAluno = exports.criarMotorista = exports.criarAluno = void 0;
+exports.criarAdmin = exports.excluirMotorista = exports.excluirAluno = exports.criarMotorista = exports.criarAluno = void 0;
 const app_1 = require("firebase-admin/app");
 const auth_1 = require("firebase-admin/auth");
 const firestore_1 = require("firebase-admin/firestore");
@@ -109,6 +109,20 @@ exports.excluirAluno = (0, https_1.onCall)({ region: 'southamerica-east1' }, asy
         db.collection('alunos').doc(alunoId).delete(),
         db.collection('usuarios').doc(alunoId).delete(),
         adminAuth.deleteUser(alunoId).catch(() => { }), // ignora se já não existir
+    ]);
+    return { success: true };
+});
+// ─── excluirMotorista ─────────────────────────────────────────────────────────
+// Remove o motorista do Firebase Auth e do Firestore.
+exports.excluirMotorista = (0, https_1.onCall)({ region: 'southamerica-east1' }, async (request) => {
+    if (!request.auth)
+        throw new https_1.HttpsError('unauthenticated', 'Não autenticado.');
+    await assertAdmin(request.auth.uid);
+    const { motoristaId } = request.data;
+    await Promise.all([
+        db.collection('motoristas').doc(motoristaId).delete(),
+        db.collection('usuarios').doc(motoristaId).delete(),
+        adminAuth.deleteUser(motoristaId).catch(() => { }),
     ]);
     return { success: true };
 });

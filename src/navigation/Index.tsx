@@ -23,6 +23,7 @@ import { ComprovanteScreen } from '../screens/aluno/ComprovanteScreen';
 import { MotoristaScreen }   from '../screens/motorista/MotoristaScreen';
 import { ReservasScreen }    from '../screens/admin/ReservasScreen';
 import { AlunosScreen }      from '../screens/admin/AlunosScreen';
+import { MotoristasScreen }  from '../screens/admin/MotoristasScreen';
 import { CadastroScreen }    from '../screens/admin/CadastroScreen';
  
 const logo = require('../assets/logo-Maragogi.png');
@@ -105,6 +106,11 @@ const AdminNavigator: React.FC<{ admin: Admin; onLogout: () => void }> = ({ admi
           name="AdminAlunos"
           component={AlunosScreen}
           options={{ tabBarLabel: 'Alunos', tabBarIcon: ({ color }) => <TabIcon icon="👤" color={color} /> }}
+        />
+        <AdminTab.Screen
+          name="AdminMotoristas"
+          component={MotoristasScreen}
+          options={{ tabBarLabel: 'Motoristas', tabBarIcon: ({ color }) => <TabIcon icon="🚌" color={color} /> }}
         />
         <AdminTab.Screen
           name="AdminCadastro"
