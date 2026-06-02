@@ -1,0 +1,149 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────────────
+    //  FUNÇÕES AUXILIARES
+    // ─────────────────────────────────────────────────────────────────
+
+    /** Retorna o documento do usuário autenticado */
+    function getUsuario() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
+    }
+
+    /** Verifica se o usuário autenticado tem o papel indicado */
+    function temPapel(papel) {
+      return request.auth != null && getUsuario().papel == papel;
+    }
+
+    /** Verifica se o aluno está ativo (não suspenso e ano de conclusão >= ano atual) */
+    function alunoAtivo(uid) {
+      let aluno = get(/databases/$(database)/documents/alunos/$(uid)).data;
+      return aluno.status == 'ativo';
+    }
+
+    /** Janela de reserva: das 17h às 11h do dia seguinte (UTC-3) */
+    function dentroJanelaReserva() {
+      let hora = request.time.hours();  // UTC
+      // 17h BRT = 20h UTC  |  11h BRT = 14h UTC
+      return hora >= 20 || hora < 14;
+    }
+
+    /** Verifica se o cancelamento ainda é permitido (até 16h BRT = 19h UTC) */
+    function podeCancelar() {
+      let hora = request.time.hours();
+      return hora < 19;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  COLEÇÃO: usuarios
+    //  Contém: { papel, nome, email?, status, createdAt, updatedAt }
+    // ─────────────────────────────────────────────────────────────────
+    match /usuarios/{uid} {
+      // Qualquer usuário autenticado lê apenas o próprio doc
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      // Admin lê qualquer doc de usuário
+      allow read: if temPapel('admin');
+
+      // Somente o backend (Cloud Functions) cria/atualiza via Admin SDK
+      // (regra implícita: nenhuma escrita direta do cliente)
+      allow write: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  COLEÇÃO: alunos
+    //  Contém todos os dados cadastrais do aluno
+    // ─────────────────────────────────────────────────────────────────
+    match /alunos/{alunoId} {
+      // Aluno lê apenas o próprio doc
+      allow read: if request.auth != null && request.auth.uid == alunoId;
+
+      // Motorista e admin leem qualquer aluno
+      allow read: if temPapel('motorista') || temPapel('admin');
+
+      // Admin pode atualizar dados (advertências, status) diretamente do app
+      allow update: if temPapel('admin');
+
+      // Criação e exclusão somente via Cloud Functions (Admin SDK)
+      allow create, delete: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  COLEÇÃO: admins
+    // ─────────────────────────────────────────────────────────────────
+    match /admins/{adminId} {
+      allow read: if request.auth != null && request.auth.uid == adminId;
+      allow write: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  COLEÇÃO: motoristas
+    // ─────────────────────────────────────────────────────────────────
+    match /motoristas/{motoristaId} {
+      allow read: if request.auth != null && request.auth.uid == motoristaId;
+      allow read: if temPapel('admin');
+      allow write: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  COLEÇÃO: reservas
+    //  doc ID = "{alunoId}_{data}"  ex: "abc123_2025-07-18"
+    // ─────────────────────────────────────────────────────────────────
+    match /reservas/{reservaId} {
+      // Aluno lê somente as próprias reservas
+      allow read: if request.auth != null
+        && resource.data.alunoId == request.auth.uid;
+
+      // Motorista e admin leem todas
+      allow read: if temPapel('motorista') || temPapel('admin');
+
+      // Aluno pode criar reserva se:
+      //  - autenticado, ativo, dentro da janela e alunoId coincide
+      allow create: if request.auth != null
+        && alunoAtivo(request.auth.uid)
+        && dentroJanelaReserva()
+        && request.resource.data.alunoId == request.auth.uid
+        && request.resource.data.data    == request.resource.data.data; // campo obrigatório
+
+      // Aluno pode cancelar a própria reserva enquanto dentro do prazo
+      allow delete: if request.auth != null
+        && resource.data.alunoId == request.auth.uid
+        && podeCancelar();
+
+      // Admin pode deletar qualquer reserva
+      allow delete: if temPapel('admin');
+
+      // Escrita (update) somente via Admin SDK
+      allow update: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  COLEÇÃO: advertencias
+    //  Histórico de advertências por aluno
+    // ─────────────────────────────────────────────────────────────────
+    match /advertencias/{docId} {
+      allow read:   if temPapel('admin');
+      allow create: if temPapel('admin'); // admin cria logs diretamente
+      allow update, delete: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  COLEÇÃO: fcm_tokens
+    //  Tokens de push notification por usuário
+    // ─────────────────────────────────────────────────────────────────
+    match /fcm_tokens/{uid} {
+      // Cada usuário grava/lê apenas o próprio token
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  COLEÇÃO: logs_notificacoes   (somente leitura para admins)
+    // ─────────────────────────────────────────────────────────────────
+    match /logs_notificacoes/{docId} {
+      allow read:  if temPapel('admin');
+      allow write: if false;
+    }
+  }
+}

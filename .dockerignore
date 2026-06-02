@@ -1,0 +1,34 @@
+# Dependências — reinstaladas dentro do container
+node_modules
+functions/node_modules
+functions/lib
+
+# Cache do Expo
+.expo
+.expo-shared
+
+# Pastas nativas geradas pelo Expo
+android
+ios
+
+# Build outputs
+dist
+build
+
+# Logs
+*.log
+npm-debug.log*
+
+# Ambiente — .env é lido pelo docker-compose no host, não precisa ir para a imagem
+.env.local
+*.local
+
+# Git
+.git
+.gitignore
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo

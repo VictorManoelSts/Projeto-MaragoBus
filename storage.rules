@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Fotos de alunos ──────────────────────────────────────────────
+    // Path: fotos_alunos/{uid}.jpg
+    match /fotos_alunos/{uid} {
+      // O próprio aluno faz upload; admin pode fazer upload de qualquer foto
+      allow write: if request.auth != null
+        && (request.auth.uid == uid.replace('.jpg','').replace('.png','')
+            || isAdmin())
+        && request.resource.size < 3 * 1024 * 1024   // máx 3 MB
+        && request.resource.contentType.matches('image/.*');
+
+      // Aluno, motorista e admin leem
+      allow read: if request.auth != null;
+    }
+
+    // ── Função auxiliar ─────────────────────────────────────────────
+    function isAdmin() {
+      return firestore.get(
+        /databases/(default)/documents/usuarios/$(request.auth.uid)
+      ).data.papel == 'admin';
+    }
+  }
+}

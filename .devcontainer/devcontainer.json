@@ -1,0 +1,42 @@
+{
+  "name": "MaragoBus",
+
+  // Usa o docker-compose.yml da raiz do projeto
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/app",
+
+  // Não executa o CMD do Dockerfile ao abrir no VS Code —
+  // o desenvolvedor inicia o servidor manualmente quando quiser
+  "overrideCommand": true,
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "expo.vscode-expo-tools",
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "formulahendry.auto-close-tag"
+      ],
+      "settings": {
+        "typescript.tsdk": "/app/node_modules/typescript/lib",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  // Portas encaminhadas automaticamente para o host
+  "forwardPorts": [8081, 19000, 19001, 19002],
+  "portsAttributes": {
+    "8081": { "label": "Metro Bundler" },
+    "19000": { "label": "Expo Go" },
+    "19001": { "label": "Expo DevTools" }
+  },
+
+  // Garante dependências atualizadas ao abrir o container
+  "postCreateCommand": "npm install && cd functions && npm install"
+}

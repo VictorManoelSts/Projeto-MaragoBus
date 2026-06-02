@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "MaragoBus",
+    "slug": "maragobus",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo-maragogi.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo-maragogi.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "br.gov.maragogi.maragobus"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo-maragogi.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "br.gov.maragogi.maragobus"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "13ccf625-0785-482d-b4ad-c87e551fcb9a"
+      }
+    },
+    "owner": "victorsts"
+  }
+}
