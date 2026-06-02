@@ -27,6 +27,12 @@
         "projectId": "13ccf625-0785-482d-b4ad-c87e551fcb9a"
       }
     },
-    "owner": "victorsts"
+    "owner": "victorsts",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/13ccf625-0785-482d-b4ad-c87e551fcb9a"
+    }
   }
 }

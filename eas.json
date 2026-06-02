@@ -1,0 +1,23 @@
+{
+  "cli": {
+    "version": ">= 20.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyCYruGKV9_Gc5DNjS8Iqo9-96Zdw6egPXA",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "projeto-maragobus.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "projeto-maragobus",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "projeto-maragobus.firebasestorage.app",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "195693032379",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:195693032379:web:81295b3034542428db4a9e"
+      }
+    },
+    "production": {}
+  },
+}
