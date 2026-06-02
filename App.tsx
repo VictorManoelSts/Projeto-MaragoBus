@@ -25,7 +25,7 @@ import { ReservasScreen }   from './src/screens/admin/ReservasScreen';
 import { AlunosScreen }     from './src/screens/admin/AlunosScreen';
 import { CadastroScreen }   from './src/screens/admin/CadastroScreen';
 
-const logo = require('./src/assets/logo-Maragogi.png');
+const logo = require('./assets/logo-Maragogi.png');
 
 // ─── Stacks / Tabs ───────────────────────────────────────────────────────────
 const RootStack = createNativeStackNavigator<RootStackParamList>();
