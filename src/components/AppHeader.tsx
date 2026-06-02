@@ -17,7 +17,7 @@ interface AppHeaderProps {
   exibirLogo?: boolean;
 }
 
-const logo = require('../assets/logo-Maragogi.png');
+const logo = require('../../assets/logo-Maragogi.png');
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
   titulo,
