@@ -36,9 +36,7 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
       const { uid, papel } = await login(cpf, senha);
 
       if (papel !== perfil) {
-        Alert.alert('Perfil incorreto', `Este CPF pertence a um usuário com perfil "${papel}". Selecione o perfil correto.`);
-        setLoading(false);
-        return;
+        throw Object.assign(new Error(), { code: 'auth/invalid-credential' });
       }
 
       if (papel === 'aluno') {
